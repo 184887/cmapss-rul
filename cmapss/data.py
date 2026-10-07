@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 
@@ -27,3 +28,18 @@ def add_rul(df: pd.DataFrame, clip: int | None = 125) -> pd.DataFrame:
     if clip is not None:
         df["RUL"] = df["RUL"].clip(upper=clip)
     return df
+
+def plot(val, y_val, y_pred, motorer):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharey=True)
+    for ax, motor in zip(axes.flat, motorer):
+        maske = (val.unit_nr == motor).values
+        ax.plot(val.time_cycles[maske], y_val[maske], "b", label="Sann RUL")
+        ax.plot(val.time_cycles[maske], y_pred[maske], "r", label="Predikert RUL")
+        ax.set_title(f"Motor {motor}")
+        ax.set_xlabel("Syklus")
+    axes[0, 0].legend()
+    plt.show()
+
+def nasa_score(y_true, y_pred):
+    d = np.asarray(y_pred) - np.asarray(y_true)
+    return np.sum(np.where(d < 0, np.exp(-d / 13), np.exp(d / 10)) - 1)
