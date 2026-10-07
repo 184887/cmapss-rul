@@ -10,12 +10,22 @@ COLS = (["unit_nr", "time_cycles"]
         + [f"s_{i}" for i in range(1, 22)])
 
 
-def load_raw(subset: str, split: str) -> pd.DataFrame:
-    path = DATA_DIR / "raw" / f"{split}_{subset}.txt"
+def _read(filename: str, names: list[str]) -> pd.DataFrame:
+    path = DATA_DIR / "raw" / filename
     if not path.exists():
         raise FileNotFoundError(
             f"Fant ikke {path}. Last ned C-MAPSS fra NASA og legg filene i data/raw/.")
-    return pd.read_csv(path, sep=r"\s+", header=None, names=COLS)
+    return pd.read_csv(path, sep=r"\s+", header=None, names=names)
+
+
+def load_raw(subset: str, split: str) -> pd.DataFrame:
+    return _read(f"{split}_{subset}.txt", COLS)
+
+
+def load_rul_truth(subset: str) -> pd.DataFrame:
+    df = _read(f"RUL_{subset}.txt", ["RUL"])
+    df["unit_nr"] = df.index + 1
+    return df
 
 
 def add_rul(df: pd.DataFrame, clip: int | None = 125) -> pd.DataFrame:
@@ -24,7 +34,6 @@ def add_rul(df: pd.DataFrame, clip: int | None = 125) -> pd.DataFrame:
     max_cycle = df.groupby("unit_nr").time_cycles.transform("max")
     df = df.assign(RUL=max_cycle - df.time_cycles)
 
-    # motoren er «frisk» tidlig i livet, så RUL over clip gir ingen info
     if clip is not None:
         df["RUL"] = df["RUL"].clip(upper=clip)
     return df
