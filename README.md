@@ -1,3 +1,15 @@
+---
+title: CMAPSS RUL
+emoji: ✈️
+colorFrom: blue
+colorTo: gray
+sdk: gradio
+sdk_version: 6.30.0
+python_version: "3.12"
+app_file: app.py
+pinned: false
+---
+
  # CMAPSS Remaining Useful Life Prediction
 
 Tools and experiments for predicting the remaining useful life (RUL) of aircraft engines using the NASA C-MAPSS turbofan engine degradation dataset.

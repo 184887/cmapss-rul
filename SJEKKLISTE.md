@@ -6,25 +6,29 @@
 - [x] Les oppgaveteksten og rapportmalen
 - [x] Opprett `RAPPORT.md` og `figurer/`
 - [ ] Avklar gruppe (2–3 personer) og fordel arbeid
-- [ ] Commit ucommittede endringer
+- [x] Commit ucommittede endringer (d3961ac)
 
 ## Modell (ons 21. – fre 23.)
 - [x] Sammenlign Dummy, LR og RF på valideringssettet (snitt av NASA-score)
 - [x] Graf: NASA-score og feil per sann RUL (`figurer/nasa_per_rul.png`)
 - [x] Bestem grensen for «lav RUL»: G = 40 (litt over en uke ledetid)
-- [x] Velg modell på snitt-NASA for rader med RUL ≤ 40 → RandomForest
-- [x] Regn ut servicegrensen x = 95-persentilen av (pred − sann) på de samme radene → x ≈ 28
-- [ ] Feature importance for RF (graf til rapporten)
+- [x] Kryssvalidering (GroupKFold, 5 folder) av LR, RF, ExtraTrees, GB og HistGB → LR best (14,8), RF 24,2
+- [x] Hyperparametersøk (RandomizedSearchCV, 50 iter) på ExtraTrees og GB → ExtraTrees 15,2, GB 20,6
+- [ ] **Velg endelig modell: LR eller ExtraTrees (uavgjort innenfor støyen)** ← her står vi
+- [ ] Oppdater 5.3–5.5: sluttsjekk på valideringssettet, ny x, lagre ny modell
+- [ ] Feature importance for valgt modell (graf til rapporten)
 - [ ] Finn resultater fra andre på FD001 (litteratur-baseline)
-- [x] Lagre endelig modell (trent på `X_train`) + x + features med `joblib` → `models/rul_modell.joblib` (18 MB)
 - [ ] Rydd i notebooken: fjern TODO-er, oppdater innholdsliste, kort tolkning etter hvert resultat
 - [ ] Restart & Run All, så commit
 
 ## Nettside (lør 24. – man 26.)
-- [ ] Bestem hvordan modell, `test_FD001.txt` og `RUL_FD001.txt` kommer til serveren
-- [ ] Bygg Gradio-app: velg testmotor, vis graf av predikert RUL per syklus, marker servicepunkt
-- [ ] Legg `gradio` og `joblib` i `pyproject.toml`, lås sklearn-versjon
-- [ ] Deploy til Hugging Face Spaces og test i inkognitovindu
+- [x] Bestem hvordan modell og testdata kommer til serveren → alt i Git
+- [x] Bygg Gradio-app (`app.py`): last opp fil, flyturer per dag, flåtetabell, graf, feilmeldinger
+- [x] Tydelig anbefalt servicedag (ukedag + dato), dager i drift, datoakse i grafen
+- [x] Liten testfil til læreren: `eksempeldata/flate_5_motorer.txt`
+- [x] Avhengigheter: gradio i `pyproject.toml`, låste versjoner i `requirements.txt`
+- [x] Velg hosting → Hugging Face Spaces (`deploy.py`)
+- [ ] Lag HF-konto + token, `uv run hf auth login`, kjør `deploy.py`, test i inkognitovindu
 - [ ] Ta opp kort skjermvideo som reserve
 - [ ] **Hvis ikke deployet innen man 26.: lag video av lokal versjon**
 
