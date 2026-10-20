@@ -1,4 +1,10 @@
-data/
+data/*
+!data/raw/
+data/raw/*
+# testdata trengs av nettsiden
+!data/raw/test_FD001.txt
+!data/raw/RUL_FD001.txt
 target/
 __pycache__/
 .venv/
+.vibe-wise/
