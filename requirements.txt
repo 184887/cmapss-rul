@@ -1,4 +1,4 @@
-# Låste versjoner for Hugging Face Spaces (samme som uv.lock lokalt)
+# Låste versjoner for Render (samme som uv.lock lokalt)
 gradio==6.30.0
 scikit-learn==1.9.0
 joblib==1.6.0

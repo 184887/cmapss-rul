@@ -20,7 +20,7 @@ Skriv teksten under "#### Tekst", og slett resten til slutt.
 [Navn], [Dato]
 
 GitHub: https://github.com/184887/cmapss-rul
-Nettside: [lenke til Hugging Face Space]
+Nettside: https://cmapss-rul.onrender.com
 Video: [lenke, reserve]
 
 
@@ -175,7 +175,9 @@ Kilde: notebook seksjon 5.1–5.5 og 6
 <!-- Fra malen: hvordan deployet, hvordan prediksjonene brukes, overvåking og vedlikehold, forbedringer, lenke/skjermbilder -->
 
 Stikkord:
-- Gradio-app (app.py) på Hugging Face Spaces, lastet opp med deploy.py
+- Gradio-app (app.py) på Render (gratisplan), bygges automatisk fra GitHub ved hver push til main
+- Hugging Face Spaces ble forkastet: Gradio-Spaces krever nå betalt PRO
+- Gratisplanen sover etter inaktivitet → første besøk tar 30–60 sek
 - Modellen trenes lokalt i notebooken, lagres som én joblib-pakke: modell, x, features, sklearn-versjon
 - Låste versjoner i requirements.txt (joblib/sklearn må matche)
 - Input: last opp fil i C-MAPSS-format, eksempelfil til læreren (eksempeldata/flate_5_motorer.txt)
@@ -210,6 +212,6 @@ Lenke: [nettside]  Video: [lenke]
 - scikit-learn: Pedregosa et al. (2011). Scikit-learn: Machine Learning in Python. *JMLR* 12, 2825–2830.
 - Optuna: Akiba et al. (2019). Optuna: A Next-generation Hyperparameter Optimization Framework. *KDD*.
 - Gradio: https://www.gradio.app/
-- Hugging Face Spaces: https://huggingface.co/spaces
+- Render: https://render.com/docs/free
 - Anthropic Claude Code – AI-kodeverktøy brukt til: [beskriv hva, f.eks. kode til app og deploy, forklaring av begreper; modellvalg og beslutninger tatt selv]
 - [Artikler du sammenligner resultater med på FD001]

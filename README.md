@@ -1,18 +1,14 @@
----
-title: CMAPSS RUL
-emoji: ✈️
-colorFrom: blue
-colorTo: gray
-sdk: gradio
-sdk_version: 6.30.0
-python_version: "3.12"
-app_file: app.py
-pinned: false
----
-
- # CMAPSS Remaining Useful Life Prediction
+# CMAPSS Remaining Useful Life Prediction
 
 Tools and experiments for predicting the remaining useful life (RUL) of aircraft engines using the NASA C-MAPSS turbofan engine degradation dataset.
+
+## Live demo
+
+Try the model here: **https://cmapss-rul.onrender.com**
+
+The app runs on Render's free plan and sleeps when unused, so the first visit can take 30–60 seconds to load. Click one of the example files and press *Analyser*.
+
+The report is in [RAPPORT.md](RAPPORT.md).
 
 ## Overview
 

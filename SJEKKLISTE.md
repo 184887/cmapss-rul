@@ -29,8 +29,9 @@
 - [x] Tydelig anbefalt servicedag (ukedag + dato), dager i drift, datoakse i grafen
 - [x] Liten testfil til læreren: `eksempeldata/flate_5_motorer.txt`
 - [x] Avhengigheter: gradio i `pyproject.toml`, låste versjoner i `requirements.txt`
-- [x] Velg hosting → Hugging Face Spaces (`deploy.py`)
-- [ ] Lag HF-konto + token, `uv run hf auth login`, kjør `deploy.py`, test i inkognitovindu
+- [x] Velg hosting → Render gratisplan (HF Spaces krever PRO for Gradio)
+- [x] Deployet på Render: https://cmapss-rul.onrender.com
+- [ ] Test i inkognitovindu
 - [ ] Ta opp kort skjermvideo som reserve
 - [ ] **Hvis ikke deployet innen man 26.: lag video av lokal versjon**
 
