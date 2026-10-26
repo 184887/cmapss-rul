@@ -1,3 +1,4 @@
+import os
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -160,4 +161,9 @@ with gr.Blocks(title="RUL – turbofan-motorer") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch()
+    # Render gir porten i PORT og krever at serveren lytter på alle adresser
+    port = os.environ.get("PORT")
+    if port:
+        demo.launch(server_name="0.0.0.0", server_port=int(port))
+    else:
+        demo.launch()

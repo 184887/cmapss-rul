@@ -14,8 +14,10 @@
 - [x] Bestem grensen for «lav RUL»: G = 40 (litt over en uke ledetid)
 - [x] Kryssvalidering (GroupKFold, 5 folder) av LR, RF, ExtraTrees, GB og HistGB → LR best (14,8), RF 24,2
 - [x] Hyperparametersøk (RandomizedSearchCV, 50 iter) på ExtraTrees og GB → ExtraTrees 15,2, GB 20,6
-- [ ] **Velg endelig modell: LR eller ExtraTrees (uavgjort innenfor støyen)** ← her står vi
-- [ ] Oppdater 5.3–5.5: sluttsjekk på valideringssettet, ny x, lagre ny modell
+- [x] KNN, SVR og MLP (med StandardScaler i Pipeline) → MLP 22,8, SVR 28,4, KNN 42,8
+- [x] Optuna (100 forsøk) på GB med loss og alpha → quantile-loss, alpha ≈ 0,10: NASA 1,15
+- [x] Velg endelig modell → GradientBoosting med quantile-loss (Optuna)
+- [x] Sluttsjekk på valideringssettet (NASA ≤ 40: 0,77 mot LR 8,39), ny x = 4,5, lagret modell (0,4 MB)
 - [ ] Feature importance for valgt modell (graf til rapporten)
 - [ ] Finn resultater fra andre på FD001 (litteratur-baseline)
 - [ ] Rydd i notebooken: fjern TODO-er, oppdater innholdsliste, kort tolkning etter hvert resultat
