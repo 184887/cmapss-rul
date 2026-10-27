@@ -18,10 +18,11 @@
 - [x] Optuna (100 forsøk) på GB med loss og alpha → quantile-loss, alpha ≈ 0,10: NASA 1,15
 - [x] Velg endelig modell → GradientBoosting med quantile-loss (Optuna)
 - [x] Sluttsjekk på valideringssettet (NASA ≤ 40: 0,77 mot LR 8,39), ny x = 4,5, lagret modell (0,4 MB)
-- [ ] Feature importance for valgt modell (graf til rapporten)
+- [x] Feature importance for valgt modell (`figurer/feature_importance.png`)
 - [ ] Finn resultater fra andre på FD001 (litteratur-baseline)
 - [ ] Rydd i notebooken: fjern TODO-er, oppdater innholdsliste, kort tolkning etter hvert resultat
-- [ ] Restart & Run All, så commit
+- [x] Restart & Run All (27.10)
+- [ ] Commit
 
 ## Nettside (lør 24. – man 26.)
 - [x] Bestem hvordan modell og testdata kommer til serveren → alt i Git
@@ -35,13 +36,59 @@
 - [ ] Ta opp kort skjermvideo som reserve
 - [ ] **Hvis ikke deployet innen man 26.: lag video av lokal versjon**
 
-## Rapport (tir 27. – tor 29.) – maks 3500 ord
-- [ ] 1: Problem – scope (~700 ord inkl. metrics)
-- [ ] 1: Problem – metrics og suksesskriterium
-- [ ] 2: Data (~600 ord)
-- [ ] 3: Modellering med resultattabell og figurer (~1200 ord)
-- [ ] 4: Deployment med lenke/skjermbilder (~700 ord)
-- [ ] 5: Referanser, inkl. bruk av Claude Code
+## Rapport (tir 27. – tor 29.) – maks 3000 ord (ikke minimum)
+### Toppen
+- [ ] Prosjektnavn, navn og dato
+- [ ] Videolenke (eller fjern linjen)
+
+### 1.1 Scope
+- [x] Problem: ulik slitasje, faste intervaller, for sent er verst
+- [ ] Overgang: man vet ikke hvor slitt hver motor er
+- [x] Mål og bruker
+- [x] Hvorfor ML (vurder å legge til støy og flåtestørrelse)
+- [x] Hvordan systemet brukes (3 steg)
+- [x] Business impact
+- [ ] Ressurser: simulerte NASA-data, egen PC, gratis hosting
+
+### 1.2 Metrics og suksesskriterium
+- [ ] RMSE og hvorfor den ikke er nok
+- [ ] NASA-score: sen prediksjon straffes hardere (kobles til problemet)
+- [ ] Hovedmetrikk: NASA-score på RUL ≤ 40, og hvorfor G = 40
+- [ ] Servicegrense x: 95 % får service før svikt
+- [ ] Suksesskriterium: hva er minimum for at systemet er nyttig?
+
+### 2: Data (maks ~500 ord)
+- [ ] Kilde og delsett FD001 (simulert, én driftstilstand, én feiltype)
+- [ ] Mengde: antall motorer og rader i train og test
+- [ ] Label: RUL og hvorfor den klippes ved 125
+- [ ] Testsettet er kuttet før svikt
+- [ ] Fjernede sensorer → 14 features, og hvorfor
+- [ ] Skalering og tidsvinduer (brukt / ikke brukt, og hvorfor)
+- [ ] Etikk og representasjon
+- [ ] Figurer: sensorkurver og korrelasjon (lagre til `figurer/`)
+
+### 3: Modellering (maks ~1000 ord)
+- [ ] Oppdeling gruppert på motor og kryssvalidering, og hvorfor
+- [ ] Baseline: Dummy og LR
+- [ ] Modellene som ble testet, hyperparametersøk og Optuna
+- [ ] Fyll inn tomme celler i resultattabellene fra notebooken
+- [ ] Hvorfor GB-quantile tross dårligere RMSE (feilanalyse)
+- [ ] Feature importance (graf ferdig, tekst mangler)
+- [ ] Sammenligning med litteraturen på FD001 (kilder mangler)
+- [ ] Figurer: nasa_per_rul, scatter, feilhistogram, RUL per syklus
+
+### 4: Deployment (maks ~550 ord)
+- [ ] Hvor og hvordan den er deployet (nettside-lenken)
+- [ ] Modellpakken (joblib) og låste versjoner
+- [ ] Hva brukeren legger inn og får ut
+- [ ] Overvåking og vedlikehold
+- [ ] Svakheter og forbedringer
+- [ ] Skjermbilder av tabell og graf
+
+### 5: Referanser
+- [ ] Artikler du sammenligner med på FD001
+- [ ] Beskriv hva Claude Code er brukt til
+- [ ] Hosting-referansen stemmer med der appen faktisk ligger
 - [ ] Fjern alle stikkord og instruksjoner fra malen
 - [ ] Sjekk ordtelling
 
