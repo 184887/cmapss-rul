@@ -37,9 +37,9 @@ Grensen på 40 sykluser er valgt fordi det tilsvarer omtrent én uke med 4 til 6
 
 ### 1.3 Servicegrense og suksesskriterium
 
-Modellen kan bomme og tro at motoren har mer igjen enn den har. Derfor sender man motoren på service når modellen sier den har under x sykluser igjen. x er satt slik at 95 % av motorene får service før de svikter. For modellen jeg valgte ble x = 4,5 sykluser. Vil man ta mindre risiko, kan man øke prosenten, men da kommer motorene tidligere inn.
+Modellen kan bomme og tro at motoren har mer igjen enn den har. Derfor sender man motoren på service når modellen sier den har under x sykluser igjen. x er satt slik at 95 % av motorene får service før de svikter. For modellen jeg valgte ble x = 4,5 sykluser. Det virker lite, men GB quantile gjetter allerede litt for lavt nær svikt. På valideringssettet bommet den i snitt 4,7 sykluser for lavt når motoren hadde 40 eller mindre igjen. En del av sikkerhetsmarginen ligger altså i modellen selv, og derfor trengs det ikke en stor x. Vil man ta mindre risiko, kan man øke prosenten, men da kommer motorene tidligere inn.
 
-Systemet er bra nok når modellen slår de enkle modellene, lineær regresjon (LR) og gjennomsnitt, på NASA-score nær svikt. Minst 95 % av motorene må få service før de svikter, og x må være godt under 40, slik at man har tid til å planlegge.
+Systemet er bra nok når modellen slår de enkle modellene, lineær regresjon (LR) og gjennomsnitt, på NASA score nær svikt. Minst 95 % av motorene må få service før de svikter, og x må være godt under 40, slik at man har tid til å planlegge.
 
 ## 2: Data
 
@@ -47,12 +47,11 @@ Datasettet kommer fra NASA, som har laget et datasett med simulerte motorer som 
 
 ### 2.1 Datasett og mengde
 
-Dataene er laget med en MATLAB-simulering, siden man ikke lar ekte motorer gå til svikt, og firmaer holder dataene sine hemmelige. Det er 100 motorer i treningssettet og 100 motorer i testsettet. I treningssettet har hver motor et ulikt antall sykluser før den svikter, fra 128 til 362 sykluser. Hver syklus har 21 sensorer og 3 driftsinnstillinger.
+Dataene er laget med en MATLAB simulering, siden man ikke lar ekte motorer gå til svikt, og firmaer holder dataene sine hemmelige. Det er 100 motorer i treningssettet og 100 motorer i testsettet. I treningssettet har hver motor et ulikt antall sykluser før den svikter, fra 128 til 362 sykluser. Hver syklus har 21 sensorer og 3 driftsinnstillinger.
 
 ### 2.2 Label (RUL)
 
 RUL eller Remaining Useful Life er antall sykluser en motor har igjen før den svikter. RUL er labelen som modellen skal predikere. I treningssettet går motorene helt til svikt, så RUL kan regnes ut som siste syklus minus nåværende syklus. I testsettet stopper motorene før svikt, og den sanne RUL-en for siste syklus er gitt i en egen fil.
-
 
 RUL er kuttet ved 125. Tidlig i livet er motoren frisk, og sensorene endrer seg nesten ikke. Da kan ikke modellen se forskjell på en motor med 300 og en med 200 sykluser igjen, så det gir ikke mening å be den gjette det. Derfor settes RUL til maks 125.
 
@@ -70,8 +69,7 @@ Noen modeller bryr seg om hvor store tallene er, og andre gjør det ikke. Trær 
 
 ### 2.5 Etikk og begrensninger
 
-Det er ingen persondata å tenke på her. Det store etiske spørsmålet er sikkerheten til passasjerene og pilotene. Hvis modellen tar feil, er det vanskelig å si hvem som har ansvaret for ulykken, er det utvikleren som har trent modellen, eller teknikeren som bruker den? Det er derfor viktig at modellen er så sikker som mulig, og at den ikke tar for stor risiko. Derfor er det valgt å bruke NASA-score som feilmål, og å sette x slik at 95 % av motorene får service før de svikter.
-
+Det er ingen persondata å tenke på her. Det store etiske spørsmålet er sikkerheten til passasjerene og pilotene. Hvis modellen tar feil, er det vanskelig å si hvem som har ansvaret for ulykken, er det utvikleren som har trent modellen, eller teknikeren som bruker den? Det er derfor viktig at modellen er så sikker som mulig, og at den ikke tar for stor risiko. Derfor er det valgt å bruke NASA score som feilmål, og å sette x slik at 95 % av motorene får service før de svikter.
 
 Det er også noen begrensninger. Dataene er simulerte, og ekte motorer har mer støy og flere typer feil. FD001 har bare én driftstilstand og én feiltype, så modellen vet ikke hva den skal gjøre med motorer som flyr under andre forhold. Det er heller ikke så mange motorer, bare 100 i treningssettet. Til slutt er det antatt at én syklus er én flytur, og det er ikke sjekket mot ekte data.
 
@@ -113,19 +111,15 @@ Hvis man ser på alle tallene samlet, ser lineær regresjon bedre ut enn modelle
 
 Grunnen til at jeg likevel valgte GB quantile ser man i figurene under. Når motoren har mye levetid igjen, gjetter GB quantile for lavt. Det gir høy straff, men det er ikke farlig, motoren kommer bare litt tidlig inn på service. Nær svikt treffer GB quantile nesten helt riktig. Lineær regresjon gjetter derimot for høyt akkurat der, og det er det farlige.
 
-Nær svikt fikk GB quantile en NASA-score på 0,77, mot 8,39 for lineær regresjon.
+Nær svikt fikk GB quantile en NASA score på 0,77 på valideringssettet, mot 8,39 for lineær regresjon.
+
+Ser jeg tilbake på suksesskriteriet fra 1.3, slår GB quantile både lineær regresjon og gjennomsnittet nær svikt, og x = 4,5 er godt under 40. At 95 % får service før svikt stemmer på valideringssettet, men det er der x er satt, så det blir oppfylt automatisk. På testsettet sjekket jeg de 28 motorene som hadde 40 sykluser eller mindre igjen. 24 av dem (86 %) hadde en feil som var mindre enn x, og ville fått service i tide. Det er under 95 %. Med bare 28 motorer utgjør hver motor nesten 4 prosentpoeng, så tallet er usikkert, men det viser at 95 % ikke er noen garanti for nye motorer. Vil man være tryggere, burde x vært satt høyere, eller satt på flere motorer.
 
 | Modell               | NASA ≤ 40 (val) | RMSE (val) | RMSE (test) | NASA (test) |
 | -------------------- | --------------- | ---------- | ----------- | ----------- |
 | Gjennomsnitt (Dummy) | 1505,8          | 41,7       | 43,1        | 34 053      |
 | Lineær regresjon     | 8,39            | 20,4       | 21,9        | 1 299       |
 | GB quantile          | 0,77            | 33,4       | 32,3        | 2 608       |
-
-![NASA-score og feil langs levetiden for LR og GB quantile](figurer/nasa_per_rul.png)
-
-![Sann mot predikert RUL på testsettet](figurer/test_sann_vs_pred.png)
-
-![Feilfordeling på testsettet](figurer/test_feilfordeling.png)
 
 ### 3.5 Feilanalyse
 
@@ -149,11 +143,11 @@ Babu mfl. (2016) brukte et nevralt nett (CNN) på samme datasett og fikk RMSE p�
 
 ### 4.1 Hvordan systemet er deployet
 
-Nettsiden er laget med Gradio og ligger gratis på Render. Modellen er trent på egen PC i notebooken og lagret i én fil sammen med servicegrensen x, listen over sensorer og versjonen av scikit-learn. Nettsiden laster bare inn denne filen, så den trenger ikke trene noe selv. Versjonene av pakkene er låst i requirements.txt, fordi en lagret modell ofte ikke virker med en annen versjon av scikit-learn. Render henter koden fra GitHub og starter nettsiden. Siden det er en gratisplan, sovner den når ingen bruker den, så første besøk kan ta 30–60 sekunder.Så på å bruke Hugging Face men det var noe betalings blokkere.
+Nettsiden er laget med Gradio og ligger gratis på Render. Modellen er trent på egen PC i notebooken og lagret i én fil sammen med servicegrensen x, listen over sensorer og versjonen av scikit-learn. Nettsiden laster bare inn denne filen, så den trenger ikke trene noe selv. Versjonene av pakkene er låst i requirements.txt, fordi en lagret modell ofte ikke virker med en annen versjon av scikit-learn. Render henter koden fra GitHub og starter nettsiden. Siden det er en gratisplan, sovner den når ingen bruker den, så første besøk kan ta 30–60 sekunder. Først prøvde jeg Hugging Face Spaces, men der måtte man betale for å kjøre Gradio-apper, så jeg byttet til Render.
 
 ### 4.2 Hvordan prediksjonene brukes
 
-Brukeren laster opp en fil med sensordata i samme format som NASA-dataene og velger hvor mange flyturer motorene flyr per dag. Jeg har lagt ved noen ekesempelfiler siden jeg regner med at alle som skal teste systmet ikke har en flåte med fly. Systemet viser en oversikt over flåten med den mest kritiske motoren øverst. For hver motor kan brukeren se en graf over predikert RUL over tid, med servicegrensen markert. Systemet anbefaler også en servicedato for hver motor.
+Brukeren laster opp en fil med sensordata i samme format som NASA-dataene og velger hvor mange flyturer motorene flyr per dag. Jeg har lagt ved noen eksempelfiler, siden jeg regner med at de som skal teste systemet ikke har en flåte med fly. Systemet viser en oversikt over flåten med den mest kritiske motoren øverst. For hver motor kan brukeren se en graf over predikert RUL over tid, med servicegrensen markert. Systemet anbefaler også en servicedato for hver motor.
 
 ![Flåteoversikt på nettsiden](figurer/app_flateoversikt.png)
 
@@ -161,11 +155,15 @@ Brukeren laster opp en fil med sensordata i samme format som NASA-dataene og vel
 
 ### 4.3 Overvåking og vedlikehold
 
-I dag blir ikke systemet overvåket. Hvis det skulle brukes på ekte, så burde det vært en mulighet for en tekniker å rapportere tilbake om mortoren sviktet før service, eller om den hadde mye levetid igjen. Da kunne man sett om modellen bommet og trent den på nytt. Det burde også vært en måte å oppdatere modellen på, for eksempel med en ny fil som lastes opp til nettsiden.
+I dag blir ikke systemet overvåket. Hvis det skulle brukes på ekte, så burde det vært en mulighet for en tekniker å rapportere tilbake om motoren sviktet før service, eller om den hadde mye levetid igjen. Da kunne man sett om modellen bommet og trent den på nytt. Det burde også vært en måte å oppdatere modellen på, for eksempel med en ny fil som lastes opp til nettsiden.
 
 ### 4.4 Svakheter og forbedringer
 
 Man kunne trent modellen på flere datasett, for eksempel FD002, FD003 og FD004, som har flere driftstilstander og feiltyper. Da kunne man laget en modell som fungerer under flere forhold. Man kunne også trent den på ekte data, men det er vanskelig å få tak i.
+
+Modellen ser bare på én syklus om gangen. Hvis den i stedet fikk se de siste 20–30 syklusene, for eksempel som et glidende snitt eller stigningen til hver sensor, ville den trolig hoppet mindre og truffet bedre. Det er også det Babu mfl. gjør. Servicedatoen er i dag bare basert på den siste prediksjonen. Det hadde vært tryggere å bruke snittet av de siste prediksjonene, så én rar måling ikke flytter datoen mye.
+
+Testsettet viste at bare 86 % av motorene nær svikt fikk service i tide. Med flere motorer kunne x vært satt sikrere. Til slutt burde tilbakemeldingene fra teknikerne i 4.3 brukes til å sjekke og trene modellen på nytt jevnlig.
 
 ## 5: Referanser
 
@@ -177,4 +175,4 @@ Man kunne trent modellen på flere datasett, for eksempel FD002, FD003 og FD004,
 - Gradio: https://www.gradio.app/
 - Render: https://render.com/
 
-- Anthropic Claude Code: KI-verktøy ble brukt til å hjelpe med noe kode skriving en god del på såesielt netsiden, samt til å se over og gi tilbake meldinger på raporten ved litt skive hjelp og retskrivings forslag. Og fylle inn kilder. Brukte det osgå til å scafolde raporten og selve kode strukturen.
+- Anthropic Claude Code: Jeg har brukt KI verktøyet til en god del av kodeskrivingen, spesielt nettsiden, og til å sette opp strukturen på rapporten og koden. Det ble også brukt til å finne kilder og til å se over rapporten med tilbakemeldinger og rettskrivingsforslag.
