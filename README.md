@@ -1,54 +1,70 @@
-# CMAPSS Remaining Useful Life Prediction
+# Når bør motoren på service?
 
-Tools and experiments for predicting the remaining useful life (RUL) of aircraft engines using the NASA C-MAPSS turbofan engine degradation dataset.
+Prediksjon av gjenværende levetid (RUL) for turbofanmotorer med NASA C-MAPSS (FD001), og en nettside som anbefaler servicedato for hver motor i en flåte. Laget som ML-prosjekt i DAT158 ved HVL.
 
-## Live demo
+- **Nettside:** https://cmapss-rul.onrender.com
+- **Rapport:** [RAPPORT.md](RAPPORT.md)
 
-Try the model here: **https://cmapss-rul.onrender.com**
+## Prøv nettsiden
 
-The app runs on Render's free plan and sleeps when unused, so the first visit can take 30–60 seconds to load. Click one of the example files and press *Analyser*.
+Nettsiden ligger på gratisplanen til Render og sovner når den ikke er i bruk, så første besøk kan ta 30–60 sekunder. Klikk på en av eksempelfilene og trykk *Analyser*.
 
-The report is in [RAPPORT.md](RAPPORT.md).
+- `flate_5_motorer.txt`: en liten flåte på 5 motorer
+- `test_FD001.txt`: hele testsettet fra NASA (100 motorer)
 
-## Overview
+Du kan også laste opp din egen fil i samme format som C-MAPSS (mellomromsseparert, 26 kolonner: motornummer, syklus, 3 driftsinnstillinger og 21 sensorer).
 
-The project is intended for developing, training, and evaluating machine-learning models that estimate how many operating cycles remain before an engine reaches failure. The C-MAPSS dataset contains multivariate sensor measurements from simulated run-to-failure trajectories under different operating conditions and fault modes.
+## Kort om løsningen
 
-## Dataset
+- **Data:** FD001 (én driftstilstand, én feiltype). 14 av 21 sensorer brukes, de 7 konstante er fjernet. RUL er kuttet ved 125.
+- **Modell:** GradientBoosting med quantile loss (alpha ≈ 0,10), tunet med Optuna. Den gjetter heller for lavt enn for høyt, siden det er farligst å komme for sent.
+- **Modellvalg:** gjennomsnittlig NASA-score for rader med sann RUL ≤ 40, med 5-delt kryssvalidering delt per motor.
+- **Servicegrense:** service anbefales når predikert RUL går under x = 4,5 sykluser. x er satt på valideringssettet slik at 95 % får service før svikt.
 
-Download the C-MAPSS dataset from the [NASA Prognostics Center of Excellence](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/). Place the extracted files in the location expected by the project code. The dataset includes the commonly used subsets `FD001` through `FD004.
+| Modell           | NASA ≤ 40 (val) | RMSE (test) | NASA (test) |
+| ---------------- | --------------- | ----------- | ----------- |
+| Lineær regresjon | 8,39            | 21,9        | 1 299       |
+| GB quantile      | 0,77            | 32,3        | 2 608       |
 
-## Getting started
+GB quantile har dårligere RMSE totalt, men er mye bedre nær svikt, som er der servicen bestemmes. Se rapporten for detaljer.
 
-1. Clone the repository.
-2. Install the dependencies used by the project.
-3. Download and place the C-MAPSS data in the project data directory.
-4. Run the available training or evaluation scripts/notebooks.
+## Struktur
 
-Example setup:
+```
+app.py                  Nettsiden (Gradio)
+cmapss/data.py          Innlesing, RUL-label, NASA-score og plott
+cmapss/features.py      Listen over de 14 sensorene som brukes
+notebooks/RUL.ipynb     Utforsking, modellvalg, tuning, servicegrense og testing
+models/rul_modell.joblib  Lagret modell med x, features og scikit-learn-versjon
+eksempeldata/           Eksempelfil for nettsiden
+figurer/                Figurer brukt i rapporten
+data/raw/               C-MAPSS-filer (bare testfilene for FD001 ligger i Git)
+```
+
+## Kjør selv
+
+Prosjektet bruker Python 3.12. Med [uv](https://docs.astral.sh/uv/):
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/184887/cmapss-rul.git
 cd cmapss-rul
+uv sync
+uv run python app.py
+```
+
+Eller med pip:
+
+```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+python app.py
 ```
 
-## Workflow
+Nettsiden kjører da på http://localhost:7860. Den bruker den lagrede modellen, så den trenger ikke treningsdata.
 
-Typical experiments include:
+For å kjøre notebooken og trene modellen på nytt trengs også `train_FD001.txt`. Last ned C-MAPSS fra [NASA sitt data-repository](https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/) og legg filene i `data/raw/`.
 
-- Loading and cleaning sensor time-series data
-- Adding engine-cycle and RUL labels
-- Normalizing sensor measurements
-- Creating time-windowed training samples
-- Training and evaluating RUL regression models
+## Data
 
-## Evaluation
-
-Models can be evaluated with regression metrics such as mean squared error (MSE), root mean squared error (RMSE), and the NASA scoring function commonly used for the C-MAPSS benchmark.
-
-## License
-
-Add the project license here.
+Saxena, A., Goebel, K., Simon, D. & Eklund, N. (2008). *Damage propagation modeling for aircraft engine run-to-failure simulation.* PHM08.
